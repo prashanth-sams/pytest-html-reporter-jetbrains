@@ -1,0 +1,7 @@
+<!-- Dark-theme variant: the lighter logo blue and grey keep contrast on dark backgrounds. -->
+<svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 40 40">
+  <rect x="4" y="4" width="8" height="32" fill="#5D95C3"/>
+  <rect x="12" y="12.6" width="8" height="23.4" fill="#FFD143"/>
+  <rect x="20" y="21.3" width="8" height="14.7" fill="#A8A8A8"/>
+  <rect x="28" y="29.3" width="8" height="6.7" fill="#5D95C3"/>
+</svg>

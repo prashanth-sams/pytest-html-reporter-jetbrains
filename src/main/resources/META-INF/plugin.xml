@@ -1,0 +1,124 @@
+<!--
+  pytest-html-reporter for JetBrains IDEs.
+  Name, version, description, change notes and the supported build range are filled in by the
+  IntelliJ Platform Gradle Plugin (patchPluginXml) from gradle.properties, README.md and CHANGELOG.md.
+-->
+<idea-plugin>
+    <id>io.github.prashanthsams.pytesthtmlreporter</id>
+    <name>pytest-html-reporter</name>
+    <vendor url="https://github.com/prashanth-sams">Prashanth Sams</vendor>
+
+    <resource-bundle>messages.PytestHtmlReporterBundle</resource-bundle>
+
+    <depends>com.intellij.modules.platform</depends>
+
+    <!-- Project interpreter support. Without it, report viewing works and runs use the interpreter set in settings. -->
+    <depends optional="true" config-file="pytest-html-reporter-python.xml">com.intellij.modules.python</depends>
+
+    <!--
+      Embedded browser. Since 2026.2, JCEF ships as the separate bundled plugin com.intellij.modules.jcef, and plugins
+      using it declare that dependency explicitly. Earlier IDEs (2025.1 - 2026.1) provide JCEF from the core and have no
+      such plugin, so the dependency is optional: when JCEF is absent or disabled the viewer falls back to the system
+      browser instead of the whole plugin failing to load (see JcefSupport).
+    -->
+    <depends optional="true" config-file="pytest-html-reporter-jcef.xml">com.intellij.modules.jcef</depends>
+
+    <extensionPoints>
+        <extensionPoint qualifiedName="io.github.prashanthsams.pytesthtmlreporter.interpreterProvider"
+                        interface="io.github.prashanthsams.pytesthtmlreporter.run.PythonInterpreterProvider"
+                        dynamic="true"/>
+    </extensionPoints>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <toolWindow id="Pytest HTML Reporter"
+                    anchor="bottom"
+                    icon="io.github.prashanthsams.pytesthtmlreporter.PytestHtmlReporterIcons.ToolWindow"
+                    factoryClass="io.github.prashanthsams.pytesthtmlreporter.viewer.ReportToolWindowFactory"/>
+
+        <projectConfigurable parentId="tools"
+                             id="io.github.prashanthsams.pytesthtmlreporter.settings"
+                             instance="io.github.prashanthsams.pytesthtmlreporter.settings.ReporterConfigurable"
+                             key="settings.displayName"/>
+
+        <notificationGroup id="pytest-html-reporter" displayType="BALLOON" key="notification.group.name"/>
+
+        <iconMapper mappingFile="PytestHtmlReporterIconMappings.json"/>
+    </extensions>
+
+    <projectListeners>
+        <listener class="io.github.prashanthsams.pytesthtmlreporter.integration.PytestRunConfigurationListener"
+                  topic="com.intellij.execution.ExecutionListener"/>
+    </projectListeners>
+
+    <actions>
+        <action id="PytestHtmlReporter.Run"
+                class="io.github.prashanthsams.pytesthtmlreporter.actions.RunPytestWithHtmlReportAction"
+                icon="AllIcons.Actions.Execute"/>
+        <action id="PytestHtmlReporter.OpenReport"
+                class="io.github.prashanthsams.pytesthtmlreporter.actions.OpenReportAction"
+                icon="AllIcons.Actions.MenuOpen"/>
+        <action id="PytestHtmlReporter.Refresh"
+                class="io.github.prashanthsams.pytesthtmlreporter.actions.RefreshReportAction"
+                icon="AllIcons.Actions.Refresh"/>
+        <action id="PytestHtmlReporter.ToggleAutoRefresh"
+                class="io.github.prashanthsams.pytesthtmlreporter.actions.ToggleAutoRefreshAction"
+                icon="AllIcons.Actions.SynchronizeScrolling"/>
+        <action id="PytestHtmlReporter.OpenInBrowser"
+                class="io.github.prashanthsams.pytesthtmlreporter.actions.OpenInExternalBrowserAction"
+                icon="AllIcons.General.Web"/>
+        <action id="PytestHtmlReporter.RevealReport"
+                class="io.github.prashanthsams.pytesthtmlreporter.actions.RevealReportFileAction"
+                icon="AllIcons.Actions.ShowAsTree"/>
+        <action id="PytestHtmlReporter.Rescan"
+                class="io.github.prashanthsams.pytesthtmlreporter.actions.RescanReportsAction"
+                icon="AllIcons.Actions.Find"/>
+        <action id="PytestHtmlReporter.Settings"
+                class="io.github.prashanthsams.pytesthtmlreporter.actions.OpenReporterSettingsAction"
+                icon="AllIcons.General.Settings"/>
+        <action id="PytestHtmlReporter.SelectReport"
+                class="io.github.prashanthsams.pytesthtmlreporter.actions.SelectReportAction"/>
+
+        <group id="PytestHtmlReporter.ViewerToolbar">
+            <reference ref="PytestHtmlReporter.SelectReport"/>
+            <separator/>
+            <reference ref="PytestHtmlReporter.Refresh"/>
+            <reference ref="PytestHtmlReporter.ToggleAutoRefresh"/>
+            <separator/>
+            <reference ref="PytestHtmlReporter.OpenInBrowser"/>
+            <reference ref="PytestHtmlReporter.RevealReport"/>
+            <reference ref="PytestHtmlReporter.OpenReport"/>
+            <separator/>
+            <reference ref="PytestHtmlReporter.Run"/>
+            <reference ref="PytestHtmlReporter.Settings"/>
+        </group>
+
+        <group id="PytestHtmlReporter.ToolsMenu" popup="true"
+               icon="io.github.prashanthsams.pytesthtmlreporter.PytestHtmlReporterIcons.Reporter">
+            <reference ref="PytestHtmlReporter.Run"/>
+            <reference ref="PytestHtmlReporter.OpenReport"/>
+            <separator/>
+            <reference ref="PytestHtmlReporter.Refresh"/>
+            <reference ref="PytestHtmlReporter.ToggleAutoRefresh"/>
+            <reference ref="PytestHtmlReporter.Rescan"/>
+            <separator/>
+            <reference ref="PytestHtmlReporter.OpenInBrowser"/>
+            <reference ref="PytestHtmlReporter.RevealReport"/>
+            <separator/>
+            <reference ref="PytestHtmlReporter.Settings"/>
+            <add-to-group group-id="ToolsMenu" anchor="last"/>
+        </group>
+
+        <!-- Project view: run pytest on the selected tests, and open a report file in the viewer. -->
+        <action id="PytestHtmlReporter.RunOnSelection"
+                class="io.github.prashanthsams.pytesthtmlreporter.actions.RunPytestWithHtmlReportAction"
+                icon="io.github.prashanthsams.pytesthtmlreporter.PytestHtmlReporterIcons.Reporter">
+            <add-to-group group-id="ProjectViewPopupMenuRunGroup" anchor="last"/>
+        </action>
+        <action id="PytestHtmlReporter.OpenInViewer"
+                class="io.github.prashanthsams.pytesthtmlreporter.actions.OpenInReporterViewerAction"
+                icon="io.github.prashanthsams.pytesthtmlreporter.PytestHtmlReporterIcons.Reporter">
+            <add-to-group group-id="ProjectViewPopupMenuRunGroup" anchor="last"/>
+            <add-to-group group-id="EditorTabPopupMenu" anchor="last"/>
+        </action>
+    </actions>
+</idea-plugin>

@@ -1,0 +1,6 @@
+<!-- Loaded only when Python support (com.intellij.modules.python) is present: PyCharm, or IntelliJ IDEA with the Python plugin. -->
+<idea-plugin>
+    <extensions defaultExtensionNs="io.github.prashanthsams.pytesthtmlreporter">
+        <interpreterProvider implementation="io.github.prashanthsams.pytesthtmlreporter.python.PythonSdkInterpreterProvider"/>
+    </extensions>
+</idea-plugin>

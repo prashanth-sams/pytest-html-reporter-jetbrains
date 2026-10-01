@@ -1,0 +1,126 @@
+{
+  "reporterVersion": "0.4.3",
+  "frozenTime": "2026-03-07T09:05:04.123456",
+  "cases": [
+    {
+      "input": "",
+      "expanded": ".",
+      "folder": ".",
+      "file": "pytest_html_report.html"
+    },
+    {
+      "input": ".",
+      "expanded": ".",
+      "folder": ".",
+      "file": "pytest_html_report.html"
+    },
+    {
+      "input": "report",
+      "expanded": "report",
+      "folder": "report",
+      "file": "pytest_html_report.html"
+    },
+    {
+      "input": "report/",
+      "expanded": "report/",
+      "folder": "report",
+      "file": "pytest_html_report.html"
+    },
+    {
+      "input": "./report",
+      "expanded": "./report",
+      "folder": "report",
+      "file": "pytest_html_report.html"
+    },
+    {
+      "input": "./report/report.html",
+      "expanded": "./report/report.html",
+      "folder": "report",
+      "file": "report.html"
+    },
+    {
+      "input": "report.html",
+      "expanded": "report.html",
+      "folder": ".",
+      "file": "report.html"
+    },
+    {
+      "input": "/report.html",
+      "expanded": "/report.html",
+      "folder": ".",
+      "file": "report.html"
+    },
+    {
+      "input": "out dir ü/my report ü.html",
+      "expanded": "out dir ü/my report ü.html",
+      "folder": "out dir ü",
+      "file": "my report ü.html"
+    },
+    {
+      "input": "reports/%Y%m%d/report_%H%M.html",
+      "expanded": "reports/20260307/report_0905.html",
+      "folder": "reports/20260307",
+      "file": "report_0905.html"
+    },
+    {
+      "input": "reports/%Y-%m-%d_%H-%M-%S",
+      "expanded": "reports/2026-03-07_09-05-04",
+      "folder": "reports/2026-03-07_09-05-04",
+      "file": "pytest_html_report.html"
+    },
+    {
+      "input": "100% pass/report.html",
+      "expanded": "100% pass/report.html",
+      "folder": "100% pass",
+      "file": "report.html"
+    },
+    {
+      "input": "%%Y/literal.html",
+      "expanded": "%Y/literal.html",
+      "folder": "%Y",
+      "file": "literal.html"
+    },
+    {
+      "input": "%q/unknown-directive",
+      "expanded": "%q/unknown-directive",
+      "folder": "%q/unknown-directive",
+      "file": "pytest_html_report.html"
+    },
+    {
+      "input": "a.html.d/x",
+      "expanded": "a.html.d/x",
+      "folder": ".",
+      "file": "x"
+    },
+    {
+      "input": "nested/dir.html/inner/file.html",
+      "expanded": "nested/dir.html/inner/file.html",
+      "folder": ".",
+      "file": "file.html"
+    },
+    {
+      "input": "%a %A %b %B %d %f %G %H %I %j %m %M %p %S %u %U %V %w %W %y %Y %z %Z/r.html",
+      "expanded": "Sat Saturday Mar March 07 123456 2026 09 09 066 03 05 AM 04 6 09 10 6 09 26 2026  /r.html",
+      "folder": "Sat Saturday Mar March 07 123456 2026 09 09 066 03 05 AM 04 6 09 10 6 09 26 2026  ",
+      "file": "r.html"
+    },
+    {
+      "input": "%c/r.html",
+      "expanded": "Sat Mar  7 09:05:04 2026/r.html",
+      "folder": "Sat Mar  7 09:05:04 2026",
+      "file": "r.html"
+    },
+    {
+      "input": "%x/r.html",
+      "expanded": "03/07/26/r.html",
+      "folder": "03/07/26",
+      "file": "r.html"
+    },
+    {
+      "input": "%X/r.html",
+      "expanded": "09:05:04/r.html",
+      "folder": "09:05:04",
+      "file": "r.html"
+    }
+  ]
+}

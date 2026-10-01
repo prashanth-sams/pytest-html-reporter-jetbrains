@@ -1,0 +1,28 @@
+# Gradle
+.gradle/
+build/
+!gradle/wrapper/gradle-wrapper.jar
+.kotlin/
+.intellijPlatform/
+
+# IDE
+.idea/
+*.iml
+out/
+
+# Python fixture generation
+.venv/
+**/__pycache__/
+**/.pytest_cache/
+scripts/.fixture-venv/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Never commit signing material
+*.pem
+*.key
+*.crt
+chain.crt
+private.pem

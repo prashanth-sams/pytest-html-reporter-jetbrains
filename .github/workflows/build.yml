@@ -1,0 +1,133 @@
+# Build, test and verify on every push and pull request; keeps the plugin ZIP as a workflow artifact.
+# Publishing is a separate, explicit workflow (release.yml).
+name: Build
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      extraVerifyIde:
+        description: "Extra IDE for the Plugin Verifier, as TYPE:VERSION (e.g. PyCharm:2026.3)"
+        required: false
+        default: ""
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    name: Build and test
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.properties.outputs.version }}
+      verifyIdes: ${{ steps.properties.outputs.verifyIdes }}
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Validate the Gradle wrapper
+        uses: gradle/actions/wrapper-validation@v6
+
+      - uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - uses: gradle/actions/setup-gradle@v6
+
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.12"
+
+      # Real interpreters for the end-to-end run tests: the current reporter and the oldest supported one.
+      - name: Create test interpreters
+        run: |
+          python -m venv "$RUNNER_TEMP/reporter-current"
+          "$RUNNER_TEMP/reporter-current/bin/python" -m pip install --quiet "pytest-html-reporter==0.4.3"
+          python -m venv "$RUNNER_TEMP/reporter-oldest"
+          "$RUNNER_TEMP/reporter-oldest/bin/python" -m pip install --quiet "pytest-html-reporter==0.3.0"
+          # pytest without the reporter, for the missing-dependency path.
+          python -m venv "$RUNNER_TEMP/pytest-only"
+          "$RUNNER_TEMP/pytest-only/bin/python" -m pip install --quiet pytest
+
+      - name: Read plugin properties
+        id: properties
+        run: |
+          echo "version=$(./gradlew properties --console=plain -q | awk '/^version:/ {print $2}')" >> "$GITHUB_OUTPUT"
+          # verifyIdes from gradle.properties as a JSON array for the verifier matrix.
+          ides=$(grep '^verifyIdes' gradle.properties | cut -d= -f2- | tr -d ' ')
+          extra="${{ github.event.inputs.extraVerifyIde }}"
+          if [ -n "$extra" ]; then ides="$ides,$extra"; fi
+          echo "verifyIdes=$(echo "$ides" | python3 -c 'import json,sys; print(json.dumps(sys.stdin.read().strip().split(",")))')" >> "$GITHUB_OUTPUT"
+
+      - name: Build, test and check the plugin
+        run: >
+          xvfb-run --auto-servernum
+          ./gradlew :buildPlugin :test :verifyPluginStructure :verifyPluginProjectConfiguration --console=plain
+        env:
+          PYTEST_HTML_REPORTER_PYTHON: ${{ runner.temp }}/reporter-current/bin/python
+          PYTEST_HTML_REPORTER_PYTHON_WITHOUT_REPORTER: ${{ runner.temp }}/pytest-only/bin/python
+
+      - name: End-to-end runs against the oldest supported reporter (0.3.0)
+        run: xvfb-run --auto-servernum ./gradlew :test --tests '*PytestRunServiceTest' --console=plain
+        env:
+          PYTEST_HTML_REPORTER_PYTHON: ${{ runner.temp }}/reporter-oldest/bin/python
+
+      - name: Keep the plugin ZIP
+        uses: actions/upload-artifact@v7
+        with:
+          name: pytest-html-reporter-${{ steps.properties.outputs.version }}
+          path: build/distributions/pytest-html-reporter-*.zip
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Keep test reports
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v7
+        with:
+          name: test-reports
+          path: build/reports/tests
+          retention-days: 14
+
+  verify:
+    name: Plugin Verifier (${{ matrix.ide }})
+    needs: build
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        ide: ${{ fromJSON(needs.build.outputs.verifyIdes) }}
+    steps:
+      # Each IDE is a 1-1.5 GB download that unpacks to several GB.
+      - name: Free disk space
+        uses: jlumbroso/free-disk-space@v2
+        with:
+          tool-cache: false
+          large-packages: false
+
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-java@v6
+        with:
+          distribution: temurin
+          java-version: 21
+
+      - uses: gradle/actions/setup-gradle@v6
+        with:
+          cache-read-only: true
+
+      - name: Verify against ${{ matrix.ide }}
+        run: ./gradlew :verifyPlugin -PverifyIdes=${{ matrix.ide }} --console=plain
+
+      - name: Keep the verifier report
+        if: ${{ !cancelled() }}
+        uses: actions/upload-artifact@v7
+        with:
+          name: plugin-verifier-${{ strategy.job-index }}
+          path: build/reports/pluginVerifier
+          retention-days: 14

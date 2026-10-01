@@ -1,0 +1,1 @@
+{"protocol": 1, "python": {"version": "3.14.6", "executable": "/tmp/fixtures/venv-0.3.0/bin/python", "implementation": "cpython"}, "pipAvailable": true, "pytestVersion": "9.1.1", "reporterVersion": "0.3.0", "reporterOptions": ["--archive-count", "--html-report", "--title"], "configFile": "/tmp/fixtures/fixture project 0.3.0 \u00fc/pytest.ini"}

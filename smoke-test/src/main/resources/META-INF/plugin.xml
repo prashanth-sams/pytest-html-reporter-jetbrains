@@ -1,0 +1,13 @@
+<idea-plugin>
+    <id>io.github.prashanthsams.pytesthtmlreporter.smoketest</id>
+    <name>pytest-html-reporter smoke test</name>
+    <vendor>Prashanth Sams</vendor>
+    <description>Test-only plugin: drives pytest-html-reporter in a sandbox IDE and records what happened. Not distributed.</description>
+
+    <depends>com.intellij.modules.platform</depends>
+    <depends>io.github.prashanthsams.pytesthtmlreporter</depends>
+
+    <extensions defaultExtensionNs="com.intellij">
+        <postStartupActivity implementation="io.github.prashanthsams.pytesthtmlreporter.smoke.SmokeTestActivity"/>
+    </extensions>
+</idea-plugin>

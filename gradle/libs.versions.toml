@@ -1,0 +1,19 @@
+[versions]
+# Build plugins - checked against the Gradle Plugin Portal and Maven Central on 2026-10-01.
+kotlin = "2.4.20"
+intellijPlatform = "2.19.0"
+changelog = "2.5.0"
+
+# Test-only libraries.
+junit = "4.13.2"
+opentest4j = "1.3.0"
+
+[libraries]
+junit = { group = "junit", name = "junit", version.ref = "junit" }
+# Workaround for IJPL-157292 - see the IntelliJ Platform Gradle Plugin FAQ.
+opentest4j = { group = "org.opentest4j", name = "opentest4j", version.ref = "opentest4j" }
+
+[plugins]
+kotlin = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+intellijPlatform = { id = "org.jetbrains.intellij.platform", version.ref = "intellijPlatform" }
+changelog = { id = "org.jetbrains.changelog", version.ref = "changelog" }
