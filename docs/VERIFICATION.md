@@ -1,7 +1,11 @@
-# Verification report - pytest-html-reporter 0.1.0
+# Verification report - pytest-html-reporter 0.4.3
 
-What was checked for this release, how, and with what result. Everything here was run on 2026-10-01 against the
-build in `build/distributions/pytest-html-reporter-0.1.0.zip`. Items that were **not** verified are listed at the end.
+What was checked for this release, how, and with what result. Items that were **not** verified are listed at the end.
+
+The release was first built as 0.4.3 and checked on 2026-10-01, then renumbered to 0.4.3 on 2026-10-02 with no other
+change. The build, the automated tests, the final Plugin Verifier checks (section 4, "Which build was checked") and
+the smoke tests were run again on 2026-10-02 against `build/distributions/pytest-html-reporter-0.4.3.zip`; the
+remaining results are from 2026-10-01.
 
 ## Environment
 
@@ -39,10 +43,10 @@ Checked by running the released packages, not only by reading the code.
 ./gradlew clean :buildPlugin :test :verifyPluginStructure :verifyPluginProjectConfiguration   -> BUILD SUCCESSFUL
 ```
 
-- `buildPlugin`: `build/distributions/pytest-html-reporter-0.1.0.zip`. It is 375,882 bytes and holds one JAR: 176
+- `buildPlugin`: `build/distributions/pytest-html-reporter-0.4.3.zip`. It is 375,882 bytes and holds one JAR: 176
   classes, the descriptors, icons, message bundle and probe script, and `META-INF/LICENSE` and `META-INF/NOTICE.md`. It
   bundles no libraries; the Kotlin standard library comes from the IDE.
-  SHA-256 `17e418ae8ac7de3369881768fb1feeddff3a00e09fb6a191f00f98f40d14fda5`.
+  SHA-256 `c756944c7c5643c82c26f24caa806ab302f565543807e05fc7299d8298296b7d`.
 - Reproducible: `./gradlew clean :buildPlugin --no-build-cache --rerun-tasks` rebuilds a byte-identical ZIP.
 - `verifyPluginStructure`: no problems.
 - `verifyPluginProjectConfiguration`: no problems (an earlier `until-build` was removed on its advice).
@@ -111,11 +115,11 @@ result itself: "some of which may be caused by absence of optional dependency". 
 **2026.3 EAP.** The first EAP check found calls of `BrowserUtil.browse(File)`, which is scheduled for removal. They
 now use the `Path` overload, and the final EAP check reports no scheduled-for-removal usages.
 
-**Which build was checked.** The matrix above ran on the 0.1.0 ZIP as it was before `LICENSE` and `NOTICE.md` were
-added to the JAR's `META-INF/` (374,117 bytes). The final ZIP differs from it only by those two text files. It was
-checked again against the oldest and the newest stable targets: PyCharm Community 2025.1.6.2 **Compatible**; PyCharm
-2026.2.3 and IntelliJ IDEA 2026.2.3, the latter with the Python plugin, **Compatible** with the same deprecated API
-usage.
+**Which build was checked.** The matrix above ran on an earlier build, still numbered 0.4.3 and without `LICENSE` and
+`NOTICE.md` in the JAR's `META-INF/` (374,117 bytes). The final 0.4.3 ZIP differs from it only by those two text files
+and the version number. It was checked again against the oldest and the newest stable targets: PyCharm Community
+2025.1.6.2 **Compatible**; PyCharm 2026.2.3 and IntelliJ IDEA 2026.2.3, the latter with the Python plugin,
+**Compatible** with the same deprecated API usage.
 
 ## 5. Development-IDE smoke tests
 
@@ -126,16 +130,16 @@ the IDE's trust check stays on. Each full run starts without SDKs, so the IDE co
 user first opens the project. The harness creates an SDK of its own only if the IDE has not done so within 30 s; it
 was not needed in the final runs.
 
-The final runs used the final build (ZIP SHA-256 `17e418ae…`):
+The final runs used the final build (ZIP SHA-256 `c756944c…`):
 
 | Step | PyCharm Community 2025.1.6.2 | PyCharm 2026.2.3 |
 | --- | --- | --- |
 | Environment | JCEF in the platform; `JBCefBrowser` loads through the plugin class loader | JCEF from the separate `com.intellij.modules.jcef` plugin, loaded through the optional dependency; JBR 25, CEF 144 |
 | Project interpreter, configured by the IDE, resolved through the Python integration (path with spaces and `ü`) | ✓ SDK "Python 3.14 (sample project ü)" | ✓ SDK named after the `.venv` path |
 | Tool window empty state | ✓ | ✓ |
-| **Run pytest with HTML Report** (exit 1) → report of that run shown, outcome notification | ✓ 7.1 s | ✓ 9.0 s |
+| **Run pytest with HTML Report** (exit 1) → report of that run shown, outcome notification | ✓ 6.2 s | ✓ 6.5 s |
 | Report pages (dashboard, test metrics, screenshots, API logs) rendered offline | ✓ | ✓ |
-| Report rewritten from outside the IDE → auto-refresh, page (`#test-metrics`) kept (step includes a 1 s settle) | ✓ 3.6 s | ✓ 3.3 s |
+| Report rewritten from outside the IDE → auto-refresh, page (`#test-metrics`) kept (step includes a 1 s settle) | ✓ 2.5 s | ✓ 2.5 s |
 | Second report → listed in the selector | ✓ | ✓ |
 | Settings page opens and closes | ✓ | ✓ |
 | Untrusted project → report not opened automatically, run refused | ✓ | ✓ |

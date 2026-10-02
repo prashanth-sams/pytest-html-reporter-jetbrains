@@ -1,12 +1,12 @@
 {
   "mode": "fallback",
   "steps": [
-    {"step": "smart mode", "ok": true, "millis": 9702, "details": "indexing finished"},
-    {"step": "environment", "ok": true, "millis": 1, "details": "ide=PyCharm 2025.1.6.2 (PC-251.29188.66); plugin=0.1.0; pythonPlugin=251.29188.66; jcefPlugin=none (JCEF in core); JBCefBrowser via plugin class loader=com.intellij.util.lang.PathClassLoader@13221655; JBCefApp.isSupported=false; trusted=true"},
-    {"step": "fallback", "ok": true, "millis": 159, "details": "status=Unsupported"},
-    {"step": "project close", "ok": true, "millis": 257, "details": "closed=true, disposed=true"}
+    {"step": "smart mode", "ok": true, "millis": 323, "details": "indexing finished"},
+    {"step": "environment", "ok": true, "millis": 0, "details": "ide=PyCharm 2025.1.6.2 (PC-251.29188.66); plugin=0.4.3; pythonPlugin=251.29188.66; jcefPlugin=none (JCEF in core); JBCefBrowser via plugin class loader=com.intellij.util.lang.PathClassLoader@13221655; JBCefApp.isSupported=false; trusted=true"},
+    {"step": "fallback", "ok": true, "millis": 209, "details": "status=Unsupported"},
+    {"step": "project close", "ok": true, "millis": 158, "details": "closed=true, disposed=true"}
   ],
   "notifications": [],
-  "fileEvents": ["VFileContentChangeEvent <repo>/build/smoke/runSmokeTest/trusted ü/sample project ü/report/pytest_html_report.html"],
+  "fileEvents": [],
   "geometry": []
 }

@@ -7,7 +7,7 @@ plugin's change notes on JetBrains Marketplace.
 
 ## [Unreleased]
 
-## [0.1.0] - 2026-10-01
+## [0.4.3] - 2026-10-01
 
 ### Added
 

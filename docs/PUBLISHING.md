@@ -46,12 +46,12 @@ JetBrains Marketplace requires the first version of a plugin to be uploaded thro
    profile: type *Individual* (or an organization, if one should own the plugin), name **Prashanth Sams**, a public
    contact email and the website `https://github.com/prashanth-sams`. Later uploads pick this vendor.
 4. **Plugin details:**
-   - **Plugin file:** `build/distributions/pytest-html-reporter-0.1.0.zip` (or the `-signed.zip` from
+   - **Plugin file:** `build/distributions/pytest-html-reporter-0.4.3.zip` (or the `-signed.zip` from
      `./gradlew signPlugin`, see section 3). The maximum size is 400 MB; this plugin is well under 1 MB.
    - **License:** choose **MIT**. Marketplace asks for the source code URL for open-source licenses:
      `https://github.com/prashanth-sams/pytest-html-reporter-jetbrains`.
    - **Tags:** see [MARKETPLACE.md](MARKETPLACE.md) (`Testing`, `Tools Integration`, `Viewer`, `Reporting`).
-   - **Channel:** leave the default (Stable) for `0.1.0`.
+   - **Channel:** leave the default (Stable) for `0.4.3`.
    - **Hidden:** leave off, unless the plugin should stay unlisted after approval.
 5. Submit. JetBrains reviews every new plugin against the
    [approval guidelines](https://plugins.jetbrains.com/legal/approval-guidelines) before it is listed; you get an
