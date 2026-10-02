@@ -97,7 +97,9 @@ When nothing can be shown, the tool window says why - no report found yet, the s
 project is untrusted, or the embedded browser is unavailable - and offers the next step.
 
 The report follows the IDE's light or dark theme until you use the report's own theme switch, which it then
-remembers. Exports from the report's tables (CSV, Excel, PDF) are offered for saving through the IDE's save dialog.
+remembers. In a tool window too short for the report's dashboard, the dashboard keeps its layout and scrolls, like
+the report's other pages. Exports from the report's tables (CSV, Excel, PDF) are offered for saving through the IDE's
+save dialog.
 
 ### Run pytest with HTML Report
 

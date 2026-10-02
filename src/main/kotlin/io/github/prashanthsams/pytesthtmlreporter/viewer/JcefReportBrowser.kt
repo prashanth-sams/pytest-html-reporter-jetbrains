@@ -46,8 +46,9 @@ import javax.swing.JComponent
  * The embedded Chromium view of one report at a time.
  *
  * The report's own interface is used unchanged: its scripts, charts, tables, themes and `#hash` routes all run as
- * written. What this class adds is containment - see [ReportNavigationPolicy] - and two conveniences: following the
- * IDE theme until the report's own theme switch is used, and saving the report's CSV/Excel/PDF exports.
+ * written. What this class adds is containment - see [ReportNavigationPolicy] - and three conveniences: following the
+ * IDE theme until the report's own theme switch is used, letting the dashboard scroll in a short tool window instead
+ * of squeezing it, and saving the report's CSV/Excel/PDF exports.
  * No JavaScript bridge is installed; nothing in the page can call into the IDE.
  */
 internal class JcefReportBrowser(
@@ -66,7 +67,7 @@ internal class JcefReportBrowser(
 
     private val browser: JBCefBrowser = JBCefBrowser.createBuilder()
         .setEnableOpenDevToolsMenuItem(false)
-        .apply { if (headless) setOffScreenRendering(true).setCreateImmediately(true) }
+        .apply { if (headless) setOffScreenRendering(true) }
         .build()
 
     /** For tests: the underlying browser, to observe what the page did. */
@@ -98,6 +99,8 @@ internal class JcefReportBrowser(
         client.addLoadHandler(LoadHandler(), cefBrowser)
         client.addDisplayHandler(AddressHandler(), cefBrowser)
         client.addDownloadHandler(DownloadHandler(), cefBrowser)
+        // Only now that every handler is added: out-of-process JCEF takes a browser's handlers when it is created.
+        if (headless) browser.createImmediately()
     }
 
     /** Loads [report] from the start. */
@@ -133,6 +136,14 @@ internal class JcefReportBrowser(
             })();
         """.trimIndent()
         browser.cefBrowser.executeJavaScript(script, browser.cefBrowser.url ?: "", 0)
+    }
+
+    /**
+     * Gives the dashboard the height it needs, see [SCROLLING_DASHBOARD_SCRIPT]. Runs on every load: the style goes
+     * with the document.
+     */
+    private fun letDashboardScroll() {
+        browser.cefBrowser.executeJavaScript(SCROLLING_DASHBOARD_SCRIPT, browser.cefBrowser.url ?: "", 0)
     }
 
     private fun createPolicy(report: Path): ReportNavigationPolicy = ReportNavigationPolicy(
@@ -212,7 +223,9 @@ internal class JcefReportBrowser(
         }
 
         override fun onLoadEnd(browser: CefBrowser?, frame: CefFrame?, httpStatusCode: Int) {
-            if (frame?.isMain == true) applyTheme()
+            if (frame?.isMain != true) return
+            applyTheme()
+            letDashboardScroll()
         }
 
         override fun onLoadError(browser: CefBrowser?, frame: CefFrame?, errorCode: CefLoadHandler.ErrorCode?, errorText: String?, failedUrl: String?) {
@@ -282,5 +295,33 @@ internal class JcefReportBrowser(
 
     private companion object {
         private val LOG = logger<JcefReportBrowser>()
+
+        /**
+         * pytest-html-reporter 0.4.3 sizes its desktop dashboard (1200 px wide and up) to the window height so that all
+         * four cards show at once. A tool window is often only a few hundred pixels high, and the cards are then
+         * squeezed until their contents overlap and are cut off. A minimum height lets the dashboard keep its layout
+         * and scroll like the report's other pages instead; taller windows are unaffected. The dashboard needs about
+         * 620 px (660 px at 2560 px wide). A previous build adds the "since last build" highlight, and then it needs
+         * about 740 px at 1320 px wide and 900 px at 2560 px, as the cards' paddings are percentages of the width.
+         * Both minimums leave 20 to 60 px more for other platforms' fonts.
+         *
+         * The report fixes the PDF download icon 50 px from the window's right edge, which works only while the
+         * dashboard cannot scroll: it would stay put and slip under the Highlights card. It is pinned to its Trends
+         * card instead, at the same spot. That card ends 20 px plus 0.25% of the row from the window's edge and has a
+         * 1 px border, so the icon is 29 px less 0.25% of the row from the card's edge, and the card is half the row.
+         * Reports without this layout, such as 0.3.0's, have no `.dashboard-viewport` and are left as they are.
+         */
+        private val SCROLLING_DASHBOARD_SCRIPT = """
+            (function () {
+              if (document.getElementById('pytest-html-reporter-jetbrains-dashboard')) { return; }
+              var style = document.createElement('style');
+              style.id = 'pytest-html-reporter-jetbrains-dashboard';
+              style.textContent = '.dashboard-viewport { min-height: 680px; }'
+                + ' .dashboard-viewport:has(.delta-highlight:not(.is-empty)) { min-height: calc(600px + 13.5vw); }'
+                + ' @media screen and (min-width: 1200px) { .dashboard-viewport #download > i'
+                + ' { position: absolute !important; right: calc(29px - 0.5%) !important; } }';
+              (document.head || document.documentElement).appendChild(style);
+            })();
+        """.trimIndent()
     }
 }

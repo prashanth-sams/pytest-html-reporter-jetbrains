@@ -162,7 +162,8 @@ Platform messages seen in the sandbox logs that are not plugin errors:
 
 Screenshots in `docs/screenshots/` come from these runs. They are painted from the IDE's own windows, with the
 browser area taken from Chromium's own frame; CEF's frame matched the component exactly at 2× (e.g. 2716×1438 for
-1358×719).
+1358×719). The exception is `after-run.png`: it was captured again on 2026-10-02 in a passing `runSmokeTest262` run,
+after the fix for the dashboard being squeezed in a short tool window (see the changelog).
 
 ### Problems found by the smoke tests and fixed
 
@@ -173,6 +174,7 @@ browser area taken from Chromium's own frame; CEF's frame matched the component 
 | When Chromium failed to start, the viewer showed a spinner forever | 30 s load watchdog → error page with **Retry** and **Open in External Browser** |
 | **Stop** (notification action) had no effect when SIGINT is ignored, as for an IDE started in the background | Interrupt first, kill after 10 s |
 | `''` shown literally in messages without parameters | Fixed; `MessageBundleTest` checks every message |
+| In the default, short tool window the report's dashboard was squeezed to the window height until its cards overlapped and were cut off (visible in the first `after-run.png`) | The dashboard gets a minimum height and scrolls; checked by `JcefReportRenderingTest` at 1320×230 |
 
 ### JCEF on 2026.2+ from Gradle archives
 

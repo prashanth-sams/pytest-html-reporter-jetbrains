@@ -7,6 +7,11 @@ plugin's change notes on JetBrains Marketplace.
 
 ## [Unreleased]
 
+### Fixed
+
+- The report's dashboard is no longer squeezed in a short tool window, where its cards overlapped and were cut off:
+  it keeps its layout and scrolls, like the report's other pages.
+
 ## [0.4.3] - 2026-10-01
 
 ### Added
